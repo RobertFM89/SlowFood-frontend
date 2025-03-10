@@ -1,4 +1,5 @@
-import "./Navbar.css";
+
+import "../../App.css";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/auth.context";
@@ -9,33 +10,32 @@ function Navbar() {
   const { isLoggedIn, user, logOutUser } = useContext(AuthContext);
 
   return (
-    <nav>
-      <Link to="/">
+    <nav className = "bg-gray-800 p-4" >
+      <div className = "container mx-auto flex justify-between items-center" >
+      <Link to="/" className="text-white text-lg font-semibold">
         <button>Home</button>
       </Link>
+      </div>
 
       {isLoggedIn && (
         <>
-          <button onClick={logOutUser}>Logout</button>
+          <button onClick={logOutUser} className="bg-red-500 text-white px-4 py-2 rounded mr-2">Logout</button>
 
-          <Link to="/profile">
-            <button>Profile</button>
-            {/* <img src="https://picsum.photos/id/402/200/300" style={{ width: 50, height: 50, borderRadius: 25}} alt="profile" /> */}
+          <Link to="/profile" className="text-white text-lg font-semibold mr-2">
+          Profile
           </Link>
 
-          <span>{user && user.name}</span>
+          <span className="text-white" >{user && user.name}</span>
         </>
       )}
 
       {!isLoggedIn && (
         <>
-          <Link to="/signup">
-            {" "}
-            <button>Sign Up</button>{" "}
+          <Link to="/signup" className="bg-blue-500 text-white px-4 py-2 rounded mr-2">
+          Sign Up
           </Link>
-          <Link to="/login">
-            {" "}
-            <button>Login</button>{" "}
+          <Link to="/login" className="bg-green-500 text-white px-4 py-2 rounded">
+          Login
           </Link>
         </>
       )}
