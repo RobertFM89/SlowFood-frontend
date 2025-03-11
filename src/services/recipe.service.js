@@ -44,6 +44,10 @@ class RecipeService {
     return this.api.get("/api/recipes/random");
   };
 
+  getRecipesByAuthor = (authorId) => {
+    return this.api.get(`/api/recipes/author/${authorId}`);
+  };
+
   updateRecipe = (id, requestBody) => {
     return this.api.put(`/api/recipes/${id}`, requestBody);
   };
