@@ -237,17 +237,23 @@ function RecipePage() {
               </h3>
               <p className="text-gray-700">{recipe.difficulty}</p>
             </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Cocina
-              </h3>
-              <p className="text-gray-700">{recipe.cuisine}</p>
-            </div>
           </div>
 
           {/* Detalles adicionales */}
+
           <div className="mb-6 flex flex-wrap gap-2">
+            {recipe.vegetarian && (
+              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                Vegetariana
+              </span>
+            )}
+
+            {recipe.vegan && (
+              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                Vegana
+              </span>
+            )}
+
             {recipe.glutenFree && (
               <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
                 Sin gluten

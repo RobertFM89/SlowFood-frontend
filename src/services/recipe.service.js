@@ -20,8 +20,8 @@ class RecipeService {
     return this.api.post("/api/recipes", requestBody);
   };
 
-  uploadImage = (file) => {
-    return this.api.post("/api/upload", file);
+  uploadImage = (uploadData) => {
+    return this.api.post("/api/upload", uploadData);
   };
 
   getAll = () => {

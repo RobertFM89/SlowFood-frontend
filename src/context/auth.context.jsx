@@ -8,64 +8,118 @@ function AuthProviderWrapper(props) {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
 
+  /**
+   * Almacena el token de autenticación en localStorage
+   * @param {string} token - Token JWT de autenticación
+   */
   const storeToken = (token) => {
     localStorage.setItem("authToken", token);
   };
 
+  /**
+   * Elimina el token de autenticación de localStorage
+   */
+  const removeToken = () => {
+    localStorage.removeItem("authToken");
+  };
+
+  /**
+   * Verifica la autenticación del usuario usando el token almacenado
+   * y actualiza el estado del contexto en consecuencia
+   */
   const authenticateUser = () => {
-    // Get the stored token from the localStorage
+    // Obtener el token de localStorage
     const storedToken = localStorage.getItem("authToken");
 
-    // If the token exists in the localStorage
+    // Si el token existe en localStorage
     if (storedToken) {
-      // Send a request to the server using axios
-      /* 
-        axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/auth/verify`,
-          { headers: { Authorization: `Bearer ${storedToken}` } }
-        )
-        .then((response) => {})
-        */
-
-      // Or using a service
+      // Establecer estado de carga
+      setIsLoading(true);
+      
+      // Enviar una solicitud al servidor para verificar el token
       authService
         .verify()
         .then((response) => {
-          // If the server verifies that JWT token is valid  ✅
+          // Si el servidor verifica que el token JWT es válido ✅
           const user = response.data;
-          // Update state variables
+          
+          // Actualizar variables de estado
           setIsLoggedIn(true);
-          setIsLoading(false);
           setUser(user);
         })
         .catch((error) => {
-          // If the server sends an error response (invalid token) ❌
-          // Update state variables
+          // Si el servidor envía una respuesta de error (token no válido) ❌
+          console.log("Error de autenticación:", error);
+          
+          // Eliminar el token inválido
+          removeToken();
+          
+          // Actualizar variables de estado
           setIsLoggedIn(false);
-          setIsLoading(false);
           setUser(null);
+        })
+        .finally(() => {
+          // Independientemente del resultado, terminar la carga
+          setIsLoading(false);
         });
     } else {
-      // If the token is not available
+      // Si el token no está disponible
       setIsLoggedIn(false);
       setIsLoading(false);
       setUser(null);
     }
   };
 
-  const removeToken = () => {
-    localStorage.removeItem("authToken");
-  };
-
+  /**
+   * Cierra la sesión del usuario eliminando el token
+   * y actualizando el estado del contexto
+   */
   const logOutUser = () => {
-    // Upon logout, remove the token from the localStorage
+    // Al cerrar sesión, eliminar el token de localStorage
     removeToken();
-    authenticateUser();
+    
+    // Actualizar variables de estado
+    setIsLoggedIn(false);
+    setUser(null);
   };
 
+  /**
+   * Actualiza los datos del usuario sin afectar el estado de autenticación
+   * Útil para actualizar información del perfil sin requerir nuevo inicio de sesión
+   * @param {Object} userData - Nuevos datos del usuario para actualizar
+   */
+  const updateUserData = (userData) => {
+    if (user && userData) {
+      setUser({
+        ...user,
+        ...userData
+      });
+    }
+  };
+
+  /**
+   * Fuerza una actualización completa de los datos del usuario desde el servidor
+   * Útil después de actualizaciones de perfil
+   * @returns {Promise<Object|null>} - Datos del usuario o null si no está autenticado
+   */
+  const refreshUserData = async () => {
+    try {
+      if (isLoggedIn) {
+        const response = await authService.verify();
+        setUser(response.data);
+        return response.data;
+      }
+      return null;
+    } catch (error) {
+      console.log("Error al refrescar datos del usuario:", error);
+      return null;
+    }
+  };
+
+  // Efecto para autenticar al usuario al cargar la aplicación
   useEffect(() => {
-    // Run this code once the AuthProviderWrapper component in the App loads for the first time.
-    // This effect runs when the application and the AuthProviderWrapper component load for the first time.
+    // Ejecutar este código una vez que el componente AuthProviderWrapper
+    // en la aplicación se carga por primera vez.
     authenticateUser();
   }, []);
 
@@ -78,6 +132,8 @@ function AuthProviderWrapper(props) {
         storeToken,
         authenticateUser,
         logOutUser,
+        updateUserData,
+        refreshUserData
       }}
     >
       {props.children}

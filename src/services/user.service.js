@@ -16,8 +16,64 @@ class UserService {
     });
   }
 
+  // Obtener todos los usuarios
+  getAllUsers = () => {
+    return this.api.get("/api/users");
+  };
+
+  // Obtener un usuario por su ID
+  getUser = (userId) => {
+    return this.api.get(`/api/users/${userId}`, {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    });
+  };
+
+  // Seguir a un usuario
+  followUser = (userId) => {
+    return this.api.post(`/api/users/${userId}/follow`);
+  };
+
+  // Dejar de seguir a un usuario
+  unfollowUser = (userId) => {
+    return this.api.post(`/api/users/${userId}/unfollow`);
+  };
+
+  // Obtener seguidores de un usuario
+  getFollowers = (userId) => {
+    return this.api.get(`/api/users/${userId}/followers`);
+  };
+
+  // Obtener a quién sigue un usuario
+  getFollowing = (userId) => {
+    return this.api.get(`/api/users/${userId}/following`);
+  };
   getUsersToFollow = () => {
-    return this.api.get("/api/users/chefs-to-follow");
+    return this.api.get("/api/users/discover");
+  };
+
+  // Actualizar perfil de usuario
+  updateProfile = (userData) => {
+    return this.api.put("/api/users/profile", userData, {
+      headers: {
+        // Agregar cabecera para evitar el caché
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
+  };
+
+  uploadImage = (uploadData) => {
+    return this.api.post("/api/upload", uploadData, {
+      headers: {
+        // Estas cabeceras son importantes para subir archivos con FormData
+        'Content-Type': 'multipart/form-data',
+        // Evitar caché
+        'Cache-Control': 'no-cache'
+      }
+    });
   };
 }
 
