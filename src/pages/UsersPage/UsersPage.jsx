@@ -128,7 +128,7 @@ function UsersPage() {
                     <Link to={`/users/${userItem._id}`} className="flex items-center">
                       <div className="h-12 w-12 rounded-full bg-gray-200 overflow-hidden mr-4">
                         <img 
-                          src={userItem.profileImage || "https://via.placeholder.com/50?text=User"} 
+                          src={userItem.profileImage || "/images.png"} 
                           alt={userItem.name}
                           className="h-full w-full object-cover"
                         />
