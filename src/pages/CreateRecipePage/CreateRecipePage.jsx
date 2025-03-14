@@ -5,13 +5,11 @@ import RecipeForm from "../../components/RecipeForm/RecipeForm";
 function CreateRecipePage() {
   const navigate = useNavigate(); // Corregir: agregar los paréntesis para invocar el hook
 
-  const handleCreateRecipe = (recipeData) => {
+  const handleCreateRecipe = async (recipeData) => {
     // Eliminar async ya que vamos a usar promesas con then/catch para consistencia
-    return recipeService.createRecipe(recipeData)
-      .then((response) => {
-        navigate(`/recipes/${response.data._id}`);
-        return response;
-      });
+    const response = await recipeService.createRecipe(recipeData);
+    navigate(`/recipes/${response.data._id}`);
+    return response;
   };
 
   return (

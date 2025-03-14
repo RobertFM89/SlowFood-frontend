@@ -24,8 +24,16 @@ class RecipeService {
     return this.api.post("/api/upload", uploadData);
   };
 
-  getAll = () => {
-    return this.api.get("/api/recipes");
+  getAll = (page = 1, limit = 9) => {
+    return this.api.get(`/api/recipes?page=${page}&limit=${limit}`);
+  };
+
+  getRandomRecipe = () => {
+    return this.api.get("/api/recipes/random");
+  };
+
+  getMyRecipes = (page = 1, limit = 9) => {
+    return this.api.get(`/api/recipes/my-recipes?page=${page}&limit=${limit}`);
   };
 
   getOne = (id) => {
@@ -40,9 +48,6 @@ class RecipeService {
     return this.api.post(`/api/recipes/${id}/unlike`);
   };
 
-  getRandomRecipe = () => {
-    return this.api.get("/api/recipes/random");
-  };
 
   getRecipesByAuthor = (authorId) => {
     return this.api.get(`/api/recipes/author/${authorId}`);

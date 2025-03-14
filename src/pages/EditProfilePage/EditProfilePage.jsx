@@ -11,9 +11,6 @@ function EditProfilePage() {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [imageMethod, setImageMethod] = useState("current");
   
   // Estados para las operaciones
@@ -22,7 +19,6 @@ function EditProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [passwordChangeRequested, setPasswordChangeRequested] = useState(false);
   
   // Cargar los datos actuales del usuario
   useEffect(() => {
@@ -31,8 +27,8 @@ function EditProfilePage() {
       return;
     }
     
-    setName(user.name || "");
-    setBio(user.bio || "");
+    setName(user.name);
+    setBio(user.bio);
     setProfileImage(user.profileImage || "");
     setIsLoading(false);
   }, [user, navigate]);
@@ -44,8 +40,6 @@ function EditProfilePage() {
     
     setIsUploading(true);
     
-    // Usar recipeService.uploadImage en lugar de userService.uploadProfileImage
-    // ya que este método ya existe en tu aplicación
     userService.uploadImage(uploadData)
       .then((response) => {
         console.log("Respuesta de subida:", response.data);
@@ -71,23 +65,6 @@ function EditProfilePage() {
       return;
     }
     
-    // Validación para cambio de contraseña
-    if (newPassword || confirmNewPassword) {
-      setPasswordChangeRequested(true);
-      
-      // Verificar que la contraseña actual esté ingresada
-      if (!currentPassword) {
-        setErrorMessage("Debe ingresar su contraseña actual para cambiarla");
-        return;
-      }
-      
-      // Verificar que las contraseñas nuevas coincidan
-      if (newPassword !== confirmNewPassword) {
-        setErrorMessage("Las contraseñas nuevas no coinciden");
-        return;
-      }
-    }
-    
     // Preparar los datos para actualizar
     const userData = {
       name,
@@ -95,23 +72,17 @@ function EditProfilePage() {
       profileImage
     };
     
-    // Agregar contraseñas si se está cambiando
-    if (passwordChangeRequested) {
-      userData.currentPassword = currentPassword;
-      userData.newPassword = newPassword;
-    }
-    
     setIsSubmitting(true);
     
     try {
-      const response = await userService.updateProfile(userData);
-    setSuccessMessage("Perfil actualizado correctamente");
+      await userService.updateProfile(userData);
+      setSuccessMessage("Perfil actualizado correctamente");
 
-     // Forzar actualización almacenando el token nuevamente
-     const token = localStorage.getItem("authToken");
-     if (token) {
-       localStorage.setItem("authToken", token); // Reescribir el token para forzar actualización
-     }
+      // Forzar actualización almacenando el token nuevamente
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        localStorage.setItem("authToken", token);
+      }
       
       // Actualizar el contexto de autenticación para reflejar los cambios
       authenticateUser();
@@ -122,11 +93,7 @@ function EditProfilePage() {
       }, 1500);
     } catch (error) {
       console.log("Error al actualizar el perfil:", error);
-      if (error.response?.status === 401) {
-        setErrorMessage("La contraseña actual es incorrecta");
-      } else {
-        setErrorMessage(error.response?.data?.message || "Error al actualizar el perfil. Por favor, inténtelo de nuevo.");
-      }
+      setErrorMessage(error.response?.data?.message || "Error al actualizar el perfil. Por favor, inténtelo de nuevo.");
     } finally {
       setIsSubmitting(false);
     }
@@ -296,56 +263,6 @@ function EditProfilePage() {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Cuéntanos algo sobre ti..."
                 ></textarea>
-              </div>
-              
-              {/* Sección de cambio de contraseña */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Cambiar contraseña</h3>
-                
-                {/* Contraseña actual */}
-                <div className="mb-4">
-                  <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-                    Contraseña actual <span className="text-gray-500 text-xs">(requerida para cambiar la contraseña)</span>
-                  </label>
-                  <input
-                    type="password"
-                    id="currentPassword"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ingresa tu contraseña actual"
-                  />
-                </div>
-                
-                {/* Nueva contraseña */}
-                <div>
-                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                    Nueva contraseña <span className="text-gray-500 font-normal">(opcional)</span>
-                  </label>
-                  <input
-                    type="password"
-                    id="newPassword"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Dejar en blanco para mantener la actual"
-                  />
-                </div>
-                
-                {/* Confirmar nueva contraseña */}
-                <div className="mt-4">
-                  <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700">
-                    Confirmar nueva contraseña
-                  </label>
-                  <input
-                    type="password"
-                    id="confirmNewPassword"
-                    value={confirmNewPassword}
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Vuelve a escribir la nueva contraseña"
-                  />
-                </div>
               </div>
               
               {/* Botones de acción */}

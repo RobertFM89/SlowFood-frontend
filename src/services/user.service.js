@@ -23,11 +23,8 @@ class UserService {
 
   // Obtener un usuario por su ID
   getUser = (userId) => {
-    return this.api.get(`/api/users/${userId}`, {
-      headers: {
-        'Cache-Control': 'no-cache'
-      }
-    });
+    const timestamp = Date.now();
+    return this.api.get(`/api/users/${userId}?t=${timestamp}`);
   };
 
   // Seguir a un usuario
@@ -39,6 +36,8 @@ class UserService {
   unfollowUser = (userId) => {
     return this.api.post(`/api/users/${userId}/unfollow`);
   };
+
+  
 
   // Obtener seguidores de un usuario
   getFollowers = (userId) => {

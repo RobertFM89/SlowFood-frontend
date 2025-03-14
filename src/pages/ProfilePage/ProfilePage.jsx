@@ -4,6 +4,7 @@ import recipeService from "../../services/recipe.service";
 import userService from "../../services/user.service";
 import { Link } from "react-router-dom";
 
+
 function ProfilePage() {
   const { user, isLoggedIn } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
@@ -17,7 +18,6 @@ function ProfilePage() {
   useEffect(() => {
     if (!isLoggedIn || !user) {
       setLoading(false);
-      return;
     }
 
     setLoading(true);
@@ -68,28 +68,41 @@ function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-green-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         {/* Sección de cabecera del perfil */}
         <div className="bg-white shadow rounded-lg mb-6 overflow-hidden">
-          <div className="bg-blue-600 h-32 w-full"></div>
+          <div className="bg-green-600 h-32 w-full"></div>
           <div className="relative px-6 pb-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 mb-4 sm:mb-0">
-              <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-md">
+              <div className="h-24 w-4 sm:h-32 sm:w-32 rounded-full border-3 border-white bg-gray-200 overflow-hidden shadow-md">
                 <img
                   src={
-                    user?.profileImage ||
-                    "https://via.placeholder.com/150?text=Chef"
+                    user && user.profileImage
+                      ? user.profileImage
+                      : "/images.png"
                   }
                   alt={user?.name}
                   className="h-full w-full object-cover"
                 />
               </div>
               <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {user?.name}
+                <h1 className="text-3xl font-bold text-white">
+                  Chef: {user?.name}
                 </h1>
-                <p className="text-gray-600">{user?.bio}</p>
+                {user?.bio ? (
+                  <p className="mt-1 text-gray-600 italic">"{user.bio}"</p>
+                ) : (
+                  <p className="mt-4 text-gray-500 text-sm">
+                    Maestro del fuego y domador de sartenes, un artista culinario transforma ingredientes comunes en delicias legendarias (o en experimentos dignos de un extintor). Mi superpoder es picar cebolla sin llorar... bueno, casi. Si me ves con cara de preocupación, probablemente se me quemó algo... otra vez.{" "}
+                    <Link
+                      to="/profile/edit"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Añade una biografía
+                    </Link>
+                  </p>
+                )}
               </div>
             </div>
             <div className="mt-6 flex justify-end">

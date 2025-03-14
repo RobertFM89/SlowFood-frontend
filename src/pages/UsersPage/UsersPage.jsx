@@ -84,10 +84,10 @@ function UsersPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="bg-blue-600 px-6 py-4">
-            <h1 className="text-2xl font-bold text-white">Explorar Usuarios</h1>
+          <div className="bg-green-600 px-10 py-4 my-7">
+            <h1 className="text-3xl font-bold text-white">Explorar Usuarios</h1>
           </div>
           
           {/* Barra de búsqueda */}

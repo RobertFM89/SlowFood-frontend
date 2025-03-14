@@ -14,6 +14,8 @@ import IsPrivate from "./components/IsPrivate/IsPrivate";
 import IsAnon from "./components/IsAnon/IsAnon";
 import UsersPage from "./pages/UsersPage/UsersPage";
 import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";
+import RecipesPage from "./pages/RecipesPage/RecipesPage";
+
 
 function App() {
   return (
@@ -31,9 +33,13 @@ function App() {
 <Route path="/users/:userId" element={<IsPrivate><UserProfilePage /></IsPrivate>} />
   
   {/* Rutas específicas de recetas - orden importante */}
+  <Route path="/recipes" element={<RecipesPage />} />
   <Route path="/recipes/create" element={<IsPrivate><CreateRecipePage /></IsPrivate>} />
   <Route path="/recipes/edit/:id" element={<IsPrivate><EditRecipePage /></IsPrivate>} />
   <Route path="/recipes/:id" element={<IsPrivate><RecipePage /></IsPrivate>} />
+
+  
+  
 </Routes>
     </div>
   );
