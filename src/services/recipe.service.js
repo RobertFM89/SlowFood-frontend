@@ -33,7 +33,7 @@ class RecipeService {
   };
 
   getAllWithFilters = (queryString) => {
-    return this.api.get(`/api/recipes?${queryString}`);
+    return this.api.get(`/api/recipes/filter?${queryString}`);
   };
 
   getMyRecipes = (page = 1, limit = 9) => {
