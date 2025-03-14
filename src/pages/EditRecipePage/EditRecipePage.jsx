@@ -54,9 +54,9 @@ function EditRecipePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-green-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-        <div className="bg-blue-600 px-6 py-4">
+        <div className="bg-green-600 px-6 py-4 my-7">
           <h1 className="text-2xl font-bold text-white">Editar Receta</h1>
         </div>
         

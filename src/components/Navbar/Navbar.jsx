@@ -140,7 +140,7 @@ function Navbar() {
                     <div className="flex items-center">
                       <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-emerald-200">
                         <img 
-                          src={user?.profileImage || "https://via.placeholder.com/150"} 
+                          src={user?.profileImage || "/images.png"} 
                           alt={user?.name || "Usuario"} 
                           className="h-full w-full object-cover" 
                         />
@@ -194,7 +194,7 @@ function Navbar() {
                 >
                   <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-emerald-200">
                     <img 
-                      src={user?.profileImage || "https://via.placeholder.com/150"} 
+                      src={user?.profileImage || "/images.png"} 
                       alt={user?.name || "Usuario"} 
                       className="h-full w-full object-cover" 
                     />

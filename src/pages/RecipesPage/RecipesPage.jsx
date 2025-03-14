@@ -79,7 +79,7 @@ function RecipesPage() {
   return (
     <div className="min-h-screen bg-gray-100 pt-24 pb-12 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mt-8">
           <h1 className="text-3xl font-bold text-gray-900">Mis Recetas</h1>
           <Link 
             to="/recipes/create"

@@ -122,7 +122,7 @@ function RecipePage() {
     user && recipe && recipe.author && user._id === recipe.author._id;
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col items-center">
+    <div className="min-h-screen bg-green-50 py-6 flex flex-col items-center my-7">
       {recipe && (
         <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
           {/* Botones de acciones para el autor */}
