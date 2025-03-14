@@ -255,7 +255,7 @@ function HomePage() {
       ) : (
         <div className="text-center max-w-lg mx-auto px-4">
           <img
-            className="w-80 h-80 mx-auto mb-8"
+            className="w-80 h-80 mx-auto mb-8 mt-12"
             src="/LogoSlowFood-modified.png"
             alt="SlowFood Logo"
             //onError={(e) => {e.target.src = "https://via.placeholder.com/150?text=SlowFood"}}
