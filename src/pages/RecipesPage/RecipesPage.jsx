@@ -4,30 +4,49 @@ import { AuthContext } from "../../context/auth.context";
 import recipeService from "../../services/recipe.service";
 
 function RecipesPage() {
-  const { isLoggedIn, user } = useContext(AuthContext);
+  const { isLoggedIn } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  
+  // Filtros
+  const [filters, setFilters] = useState({
+    vegetarian: false,
+    vegan: false,
+    glutenFree: false,
+    lactoseFree: false
+  });
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchRecipes(currentPage);
-    }
-  }, [isLoggedIn, currentPage]);
+    fetchRecipes(currentPage);
+  }, [currentPage, filters]);
 
   const fetchRecipes = (page) => {
     setLoading(true);
-    recipeService.getMyRecipes(page)
+    
+    // Construir parámetros de consulta para los filtros
+    const queryParams = new URLSearchParams();
+    queryParams.append('page', page);
+    queryParams.append('limit', 9);
+    
+    // Añadir filtros si están activados
+    if (filters.vegetarian) queryParams.append('vegetarian', 'true');
+    if (filters.vegan) queryParams.append('vegan', 'true');
+    if (filters.glutenFree) queryParams.append('glutenFree', 'true');
+    if (filters.lactoseFree) queryParams.append('lactoseFree', 'true');
+    
+    recipeService.getAllWithFilters(queryParams.toString())
       .then((response) => {
         setRecipes(response.data.recipes);
         setTotalPages(response.data.totalPages);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error al cargar recetas:", error);
-        setError("No se pudieron cargar tus recetas. Por favor, inténtalo de nuevo.");
+        console.error("Error fetching recipes:", error);
+        setError("Error al cargar las recetas. Por favor, inténtalo de nuevo.");
         setLoading(false);
       });
   };
@@ -41,14 +60,11 @@ function RecipesPage() {
     if (window.confirm("¿Estás seguro de que quieres eliminar esta receta? Esta acción no se puede deshacer.")) {
       recipeService.deleteRecipe(recipeId)
         .then(() => {
-          // Actualizar la lista de recetas después de eliminar
           setRecipes(recipes.filter(recipe => recipe._id !== recipeId));
           
-          // Si la página actual está vacía después de eliminar y hay más páginas, ir a la página anterior
           if (recipes.length === 1 && currentPage > 1) {
             setCurrentPage(currentPage - 1);
           } else {
-            // De lo contrario, volver a cargar la página actual
             fetchRecipes(currentPage);
           }
         })
@@ -58,55 +74,144 @@ function RecipesPage() {
         });
     }
   };
-
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center pt-16 px-4">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Acceso restringido</h2>
-          <p className="text-gray-600 mb-6">Necesitas iniciar sesión para ver tus recetas.</p>
-          <Link 
-            to="/login" 
-            className="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
-          >
-            Iniciar Sesión
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  
+  const handleFilterChange = (filterName) => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      [filterName]: !prevFilters[filterName]
+    }));
+    setCurrentPage(1); // Volver a la primera página cuando se cambia un filtro
+  };
+  
+  const clearFilters = () => {
+    setFilters({
+      vegetarian: false,
+      vegan: false,
+      glutenFree: false,
+      lactoseFree: false
+    });
+    setCurrentPage(1);
+  };
+  
+  const toggleFilters = () => {
+    setShowFilters(!showFilters);
+  };
+  
+  const anyFilterActive = Object.values(filters).some(value => value);
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-24 pb-12 px-4">
+    <div className="min-h-screen bg-green-50 py-8 px-4 sm:px-6 lg:px-8 pt-20">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mt-8">
-          <h1 className="text-3xl font-bold text-gray-900">Mis Recetas</h1>
-          <Link 
-            to="/recipes/create"
-            className="flex items-center bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            Crear Nueva Receta
-          </Link>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Recetario</h1>
+          <div className="flex space-x-2">
+            <button
+              onClick={toggleFilters}
+              className="flex items-center bg-white border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+              </svg>
+              Filtros
+              {anyFilterActive && (
+                <span className="ml-2 bg-emerald-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {Object.values(filters).filter(Boolean).length}
+                </span>
+              )}
+            </button>
+            
+            <Link 
+              to="/recipes/create"
+              className="flex items-center bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              Crear Receta
+            </Link>
+          </div>
         </div>
+        
+        {/* Panel de filtros */}
+        {showFilters && (
+          <div className="bg-white p-4 mb-6 rounded-lg shadow animate-fadeIn">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="font-medium text-gray-700">Filtrar por:</div>
+              
+              <label className="inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox"
+                  checked={filters.vegetarian}
+                  onChange={() => handleFilterChange('vegetarian')}
+                  className="form-checkbox h-5 w-5 text-emerald-600 rounded"
+                />
+                <span className="ml-2 text-gray-700">Vegetarianas</span>
+              </label>
+              
+              <label className="inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox"
+                  checked={filters.vegan}
+                  onChange={() => handleFilterChange('vegan')}
+                  className="form-checkbox h-5 w-5 text-emerald-600 rounded"
+                />
+                <span className="ml-2 text-gray-700">Veganas</span>
+              </label>
+              
+              <label className="inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox"
+                  checked={filters.glutenFree}
+                  onChange={() => handleFilterChange('glutenFree')}
+                  className="form-checkbox h-5 w-5 text-emerald-600 rounded"
+                />
+                <span className="ml-2 text-gray-700">Sin Gluten</span>
+              </label>
+              
+              <label className="inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox"
+                  checked={filters.lactoseFree}
+                  onChange={() => handleFilterChange('lactoseFree')}
+                  className="form-checkbox h-5 w-5 text-emerald-600 rounded"
+                />
+                <span className="ml-2 text-gray-700">Sin Lactosa</span>
+              </label>
+              
+              {anyFilterActive && (
+                <button 
+                  onClick={clearFilters}
+                  className="ml-auto text-sm text-red-600 hover:text-red-800 transition-colors"
+                >
+                  Limpiar filtros
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
           </div>
         ) : error ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
-            {error}
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md">
+            <p>{error}</p>
           </div>
         ) : recipes.length === 0 ? (
-          <div className="bg-white p-8 rounded-lg shadow-md text-center">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">No tienes recetas todavía</h2>
-            <p className="text-gray-600 mb-6">¡Comparte tu primera receta con la comunidad!</p>
+          <div className="text-center py-16 bg-white rounded-lg shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <h2 className="mt-4 text-xl font-semibold text-gray-900">No se encontraron recetas</h2>
+            <p className="mt-2 text-gray-600">
+              {anyFilterActive 
+                ? "No hay recetas que coincidan con los filtros seleccionados." 
+                : "Aún no has creado ninguna receta."}
+            </p>
             <Link 
               to="/recipes/create"
-              className="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+              className="mt-6 inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
             >
               Crear mi primera receta
             </Link>
@@ -191,43 +296,40 @@ function RecipesPage() {
               ))}
             </div>
 
-            {/* Paginación */}
             {totalPages > 1 && (
               <div className="flex justify-center mt-10">
-                <nav className="inline-flex rounded-md shadow-sm">
+                <nav className="inline-flex rounded-md shadow">
                   <button
                     onClick={() => handlePageChange(currentPage > 1 ? currentPage - 1 : 1)}
                     disabled={currentPage === 1}
-                    className={`px-3 py-2 rounded-l-md border ${
+                    className={`relative inline-flex items-center px-4 py-2 rounded-l-md border ${
                       currentPage === 1
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-white text-emerald-600 hover:bg-emerald-50'
+                        ? 'bg-gray-100 text-gray-400'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     Anterior
                   </button>
-                  
-                  {Array.from({ length: totalPages }, (_, index) => (
+                  {Array.from({ length: totalPages }, (_, i) => (
                     <button
-                      key={index}
-                      onClick={() => handlePageChange(index + 1)}
-                      className={`px-4 py-2 border-t border-b ${
-                        currentPage === index + 1
+                      key={i + 1}
+                      onClick={() => handlePageChange(i + 1)}
+                      className={`relative inline-flex items-center px-4 py-2 border-t border-b ${
+                        currentPage === i + 1
                           ? 'bg-emerald-500 text-white'
-                          : 'bg-white text-emerald-600 hover:bg-emerald-50'
+                          : 'bg-white text-gray-700 hover:bg-gray-50'
                       }`}
                     >
-                      {index + 1}
+                      {i + 1}
                     </button>
                   ))}
-                  
                   <button
                     onClick={() => handlePageChange(currentPage < totalPages ? currentPage + 1 : totalPages)}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-2 rounded-r-md border ${
+                    className={`relative inline-flex items-center px-4 py-2 rounded-r-md border ${
                       currentPage === totalPages
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-white text-emerald-600 hover:bg-emerald-50'
+                        ? 'bg-gray-100 text-gray-400'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     Siguiente

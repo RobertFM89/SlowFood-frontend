@@ -32,6 +32,10 @@ class RecipeService {
     return this.api.get("/api/recipes/random");
   };
 
+  getAllWithFilters = (queryString) => {
+    return this.api.get(`/api/recipes?${queryString}`);
+  };
+
   getMyRecipes = (page = 1, limit = 9) => {
     return this.api.get(`/api/recipes/my-recipes?page=${page}&limit=${limit}`);
   };
@@ -39,6 +43,8 @@ class RecipeService {
   getOne = (id) => {
     return this.api.get(`/api/recipes/${id}`);
   };
+
+  
 
   likeRecipe = (id) => {
     return this.api.post(`/api/recipes/${id}/like`);

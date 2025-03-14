@@ -75,7 +75,7 @@ function ProfilePage() {
           <div className="bg-green-600 h-32 w-full"></div>
           <div className="relative px-6 pb-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 mb-4 sm:mb-0">
-              <div className="h-24 w-44 sm:h-32 sm:w-82 rounded-full border-2 border-white bg-gray-200 overflow-hidden shadow-md">
+              <div className="h-44 w-44 sm:h-32 sm:w-102 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-md">
                 <img
                   src={
                     user && user.profileImage

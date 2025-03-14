@@ -96,6 +96,18 @@ function Navbar() {
                   Mi cocina
                 </NavLink>
                 <NavLink 
+                  to="/recipes" 
+                  className={({ isActive }) => 
+                    `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive 
+                        ? 'text-emerald-700 bg-emerald-50' 
+                        : 'text-gray-700 hover:text-emerald-700 hover:bg-emerald-50'
+                    }`
+                  }
+                >
+                  Recetario
+                </NavLink>
+                <NavLink 
                   to="/users" 
                   className={({ isActive }) => 
                     `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
