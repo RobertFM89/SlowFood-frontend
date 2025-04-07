@@ -119,6 +119,7 @@ function Navbar() {
                 >
                   Comunidad
                 </NavLink>
+                
               </>
             )}
           </div>
@@ -287,6 +288,7 @@ function Navbar() {
                 >
                   Mi cocina
                 </NavLink>
+                
                 <NavLink 
                   to="/users" 
                   className={({ isActive }) => 

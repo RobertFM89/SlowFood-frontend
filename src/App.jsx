@@ -15,6 +15,9 @@ import IsAnon from "./components/IsAnon/IsAnon";
 import UsersPage from "./pages/UsersPage/UsersPage";
 import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";
 import RecipesPage from "./pages/RecipesPage/RecipesPage";
+import AICookingAssistantPage from "./pages/AICookingAssistantPage/AICookingAssistantPage";
+import Chatbot from "./components/Chatbot/Chatbot";
+
 
 
 function App() {
@@ -31,6 +34,8 @@ function App() {
   <Route path="/login" element={<IsAnon><LoginPage /></IsAnon>} />
   <Route path="/users" element={<IsPrivate><UsersPage /></IsPrivate>} />
 <Route path="/users/:userId" element={<IsPrivate><UserProfilePage /></IsPrivate>} />
+
+
   
   {/* Rutas específicas de recetas - orden importante */}
   <Route path="/recipes" element={<RecipesPage />} />
@@ -38,9 +43,18 @@ function App() {
   <Route path="/recipes/edit/:id" element={<IsPrivate><EditRecipePage /></IsPrivate>} />
   <Route path="/recipes/:id" element={<IsPrivate><RecipePage /></IsPrivate>} />
 
+{/* Nueva ruta para el asistente de cocina */}
+<Route path="/ai-cooking-assistant" element={<IsPrivate><AICookingAssistantPage /></IsPrivate>} />
   
   
 </Routes>
+      {/* Componente del chatbot */}
+      <Chatbot />
+
+      {/* Footer (si es necesario) */}
+      <footer>
+        <p>&copy; 2023 SlowFood. Todos los derechos reservados.</p>
+      </footer>
     </div>
   );
 }
