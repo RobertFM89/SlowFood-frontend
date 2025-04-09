@@ -3,7 +3,7 @@ import axios from "axios";
 class AIService {
   constructor() {
     this.api = axios.create({
-      baseURL: process.env.REACT_APP_SERVER_URL || "http://localhost:5005",
+      baseURL: process.env.REACT_APP_SERVER_URL || "https://slowfood-backend.onrender.com",
     });
 
     // Automáticamente añadir token JWT en los headers para cada petición
